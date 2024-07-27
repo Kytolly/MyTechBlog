@@ -12,9 +12,11 @@ const (
 	ERROR_TOKEN_WRONG       = 1005 // token错误
 	ERROR_TOKEN_TYPE_WRONG  = 1006 // token格式错误
 
-	// CODE=2000 + XX 文章模块的错误
-
-	// CODE=3000 + XX 分类模块的错误 
+	// CODE=2000 + XX 分类模块的错误
+	ERROR_CATEGORY_USED 	= 2001 // 分类重复
+	ERROR_CATEGORY_NOT_EXIST= 2002 // 分类不存在
+	// CODE=3000 + XX 文章模块的错误 
+	ERROR_ARTICLE_NOT_EXIST = 3001 //文章不在指定分类中
 )
 
 var CodeMsg = map[int]string{
@@ -26,6 +28,9 @@ var CodeMsg = map[int]string{
 	ERROR_TOKEN_INVALID: "the token becomes invalid!",
 	ERROR_TOKEN_WRONG: "the token is wrong!",
 	ERROR_TOKEN_TYPE_WRONG: "the token's type is wrong!",
+	ERROR_CATEGORY_USED: "the category is already exsited!",
+	ERROR_CATEGORY_NOT_EXIST: "the category is not exists!",
+	ERROR_ARTICLE_NOT_EXIST: "the article is not exsited!",
 }
 
 func GetErrorMessage(code int) string{

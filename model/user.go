@@ -44,7 +44,12 @@ func CreateUser(data *User)int{
 // 查询用户列表
 func GetUsers(pageSize int, pageNumber int)[]User{
 	var users []User
-	err := db.Limit(pageSize).Offset((pageNumber-1)*pageSize).Find(&users).Error
+	var err error
+	if pageSize > 0 && pageNumber > 0{
+		err = db.Limit(pageSize).Offset((pageNumber-1)*pageSize).Find(&users).Error
+	}else{
+		err = db.Limit(-1).Offset(-1).Find(&users).Error
+	}
 	if err != nil && err != gorm.ErrRecordNotFound{
 		slog.Info("Failed to get users", "error", err)
 		return nil
@@ -52,9 +57,29 @@ func GetUsers(pageSize int, pageNumber int)[]User{
 	return users
 }
 
-// 编辑用户
-
-//
+// 编辑用户,不包括密码
+func EditUser(id int, data *User)int{
+	var user User
+	var mp = make(map[string]interface{})
+	mp["username"] = data.Username
+	mp["role"] = data.Role
+	err :=db.Model(&user).Where("id=?", id).Updates(mp).Error
+	if err != nil{
+		slog.Info("Failed to update user", "error", err)
+		return msg.ERROR
+	}
+	return msg.SUCCESS
+}
+// 删除用户
+func DeleteUser(id int) int{
+	var user User
+	err := db.Where("id=?", id).Delete(&user).Error
+	if err != nil{
+		slog.Info("Failed to delete user", "error", err)
+		return msg.ERROR
+	}
+	return msg.SUCCESS
+}
 
 // 密码加密
 func ScryptPassword(password string)string{

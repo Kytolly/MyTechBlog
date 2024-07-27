@@ -1,7 +1,7 @@
 package v1
 
 import (
-	//"fmt"
+	"fmt"
 	"log/slog"
 	"mytechblog/model"
 	msg "mytechblog/utils/errormsg"
@@ -30,7 +30,7 @@ func AddUser(c *gin.Context){
 	status := model.CheckUser(data.Username)
 
 	if status == msg.SUCCESS{
-		model.CreateUser(&data)
+		status = model.CreateUser(&data)
 	}
 	if status == msg.ERROR_USERNAME_USED{
 		slog.Error("User already exists")
@@ -48,10 +48,6 @@ func AddUser(c *gin.Context){
 func GetUsers(c *gin.Context){
 	pageSize,_ := strconv.Atoi(c.Query("pagesize"))
 	pageNumber,_ := strconv.Atoi(c.Query("pagenumber"))
-	if pageNumber == 0{
-		pageNumber = 1
-	}
-
 	data := model.GetUsers(pageSize, pageNumber)
 	status := msg.SUCCESS
 	c.JSON(http.StatusOK, gin.H{
@@ -62,7 +58,30 @@ func GetUsers(c *gin.Context){
 }
 // 更新用户
 func UpdateUser(c *gin.Context){
+	var data model.User
+	c.ShouldBindJSON(&data)
+	id,_ := strconv.Atoi(c.Param("id"))
+	slog.Debug(fmt.Sprintf("%d", id))
+	
+	status := model.CheckUser(data.Username)
+	if status == msg.SUCCESS{
+		status = model.EditUser(id, &data)
+	}
+	if status == msg.ERROR_USERNAME_USED{
+		c.Abort()
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": status,
+		"message": msg.GetErrorMessage(status),
+	})
 }
 // 删除用户
 func DeleteUser(c *gin.Context){
+	id,_ := strconv.Atoi(c.Param("id"))
+
+	status := model.DeleteUser(id)
+	c.JSON(http.StatusOK, gin.H{
+		"status": status,
+		"message": msg.GetErrorMessage(status),
+	})
 }

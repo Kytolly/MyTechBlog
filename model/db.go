@@ -54,7 +54,7 @@ func InitDB(){
 	// }
 
 	// 自动迁移
-	db.AutoMigrate(&User{}, &Category{}, &Artical{})
+	db.AutoMigrate(&User{}, &Category{}, &Article{})
 
 	// 禁用默认表明的复数形式
 	// db.SingularTable(true)

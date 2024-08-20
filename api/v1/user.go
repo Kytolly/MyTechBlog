@@ -7,7 +7,7 @@ import (
 	msg "mytechblog/utils/errormsg"
 	"net/http"
 	"strconv"
-
+	"mytechblog/utils/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,7 +27,15 @@ func AddUser(c *gin.Context){
 	}
 	slog.Debug(data.Username)
 
-	status := model.CheckUser(data.Username)
+	valiInfo, status := validator.Validate(&data) 
+	if status != msg.SUCCESS{
+		c.JSON(http.StatusOK, gin.H{
+			"status": status,
+			"message": valiInfo,
+		})
+		return 
+	}
+	status = model.CheckUser(data.Username)
 
 	if status == msg.SUCCESS{
 		status = model.CreateUser(&data)
@@ -37,7 +45,6 @@ func AddUser(c *gin.Context){
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": status,
-		"data": data,
 		"message": msg.GetErrorMessage(status),
 	})
 }
@@ -48,11 +55,12 @@ func AddUser(c *gin.Context){
 func GetUsers(c *gin.Context){
 	pageSize,_ := strconv.Atoi(c.Query("pagesize"))
 	pageNumber,_ := strconv.Atoi(c.Query("pagenumber"))
-	data := model.GetUsers(pageSize, pageNumber)
+	data, total := model.GetUsers(pageSize, pageNumber)
 	status := msg.SUCCESS
 	c.JSON(http.StatusOK, gin.H{
 		"status": status,
 		"data": data,
+		"total": total,
 		"message": msg.GetErrorMessage(status),
 	})
 }

@@ -3,7 +3,7 @@ package test
 import (
 	//"log"
 	//"log/slog"
-	"mytechblog/logger"
+	"mytechblog/mid"
 	"mytechblog/route"
 	"mytechblog/model"
 	// "github.com/gin-gonic/gin"
@@ -11,7 +11,7 @@ import (
 
 func Server(){
 	// 设置日志
-	logger.SetLogger()
+	mid.SetLogger()
 
 	// 引用数据库
 	model.InitDB()

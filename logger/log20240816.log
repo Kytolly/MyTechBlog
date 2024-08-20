@@ -1,0 +1,1 @@
+time="2024-08-16 12:08:59" level=info Agent=PostmanRuntime-ApipostRuntime/1.1.0 DataSize=192 HostName=Kytolly Ip="::1" Method=POST Path=/api/v1/login SpendTime="147 ms" status=200
